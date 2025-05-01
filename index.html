@@ -4,69 +4,67 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Drone Demo</title> <link rel="shortcut icon" href="TemplateData/favicon.ico"> <link rel="stylesheet" href="TemplateData/style.css"> </head>
-  <body> <div id="unity-container"></div> <div id="unityContainer" class="webgl-content"> <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas> </div>
+    <title>Drone Demo</title> <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+  </head>
+  <body>
+    <div id="unity-container"></div> <div id="unityContainer" class="webgl-content"> <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas> </div>
 
     <div id="loading-cover" style="display: none;">
         <div id="unity-loading-bar">
-            <div id="unity-logo"><img src="TemplateData/logo.png" alt="Logo"></div> <div id="unity-progress-bar-empty" style="display: none;"> <div id="unity-progress-bar-full"></div>
+            <div id="unity-logo"><img src="TemplateData/logo.png" alt="Logo"></div>
+            <div id="unity-progress-bar-empty" style="display: none;">
+                <div id="unity-progress-bar-full"></div>
             </div>
-            <div class="spinner"></div> <p style="color: white; font-family: sans-serif; font-size: 1em; margin-top: 10px;">Loading...</p> </div>
+            <div class="spinner"></div>
+            <p style="color: white; font-family: sans-serif; font-size: 1em; margin-top: 10px;">Loading...</p>
+        </div>
     </div>
 
     <div id="unity-fullscreen-button" style="display: none;"></div> <script>
       // --- Build Configuration ---
-      // !!! IMPORTANT !!! Replace 'YourBuildName' with the actual build name for THIS demo.
-      // This name is the prefix for files in the Build/ folder (e.g., "demo-drone-nav").
+      // IMPORTANT: Replace "YourBuildName" with the actual build name for THIS demo.
       const buildName = "demo-drone-nav"; // <-- Build name for the drone demo
 
-      const buildUrl = "Build"; // Path to the Build folder relative to index.html
+      const buildUrl = "Build"; // Path to Build folder
       const loaderUrl = buildUrl + "/" + buildName + ".loader.js";
 
       const config = {
         dataUrl: buildUrl + "/" + buildName + ".data",
         frameworkUrl: buildUrl + "/" + buildName + ".framework.js",
         codeUrl: buildUrl + "/" + buildName + ".wasm",
-        // If your build uses memory (.wasm.memory) or symbols (.symbols.json) files, add them manually
+        // Add memoryUrl or symbolsUrl if used
         // memoryUrl: buildUrl + "/" + buildName + ".wasm.memory",
         // symbolsUrl: buildUrl + "/" + buildName + ".symbols.json",
 
-        streamingAssetsUrl: "StreamingAssets", // Path to StreamingAssets relative to index.html (if used)
+        streamingAssetsUrl: "StreamingAssets", // Path to StreamingAssets (if used)
 
-        // Static product/company names
-        companyName: "My Company",
-        productName: "Drone Demo",
-        productVersion: "1.0",
-        // backgroundUrl: buildUrl + "/background.png", // Example background image
-        // matchWebGLToCanvasSize: false, // Control canvas size manually
-        // devicePixelRatio: 1, // Control resolution on mobile
-        // showBanner: unityShowBanner, // If showBanner function is needed, copy it here
+        // Static names
+        companyName: "My Company", productName: "Drone Demo", productVersion: "1.0",
+        // backgroundUrl: buildUrl + "/background.png",
+        // matchWebGLToCanvasSize: false,
+        // devicePixelRatio: 1,
+        // showBanner: unityShowBanner,
       };
 
       // --- DOM Element References ---
-      const container = document.querySelector("#unityContainer"); // Main content container
-      const canvas = document.querySelector("#unity-canvas"); // Rendering canvas
-      const loadingCover = document.querySelector("#loading-cover"); // Loading overlay
-      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty"); // Empty progress bar div
-      const progressBarFull = document.querySelector("#unity-progress-bar-full"); // Full progress bar div
-      const fullscreenButton = document.querySelector("#unity-fullscreen-button"); // Fullscreen button
-      const spinner = document.querySelector('.spinner'); // Spinner element
+      const container = document.querySelector("#unityContainer");
+      const canvas = document.querySelector("#unity-canvas");
+      const loadingCover = document.querySelector("#loading-cover");
+      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
+      const progressBarFull = document.querySelector("#unity-progress-bar-full");
+      const fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      const spinner = document.querySelector('.spinner');
 
       // --- Helper Functions and Initial Setup ---
-
-      // Check for fullscreen API support
       const canFullscreen = (function() {
-        for (const key of [
-            'exitFullscreen', 'webkitExitFullscreen', 'webkitCancelFullScreen',
-            'mozCancelFullScreen', 'msExitFullscreen',
-          ]) {
+        for (const key of ['exitFullscreen', 'webkitExitFullscreen', 'webkitCancelFullScreen', 'mozCancelFullScreen', 'msExitFullscreen',]) {
           if (key in document) { return true; }
         }
         return false;
       }());
 
-      // Mobile detection and class assignment
-       const unityContainerBase = document.querySelector("#unity-container");
+      const unityContainerBase = document.querySelector("#unity-container");
        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
        if (isMobile) {
           if(unityContainerBase) unityContainerBase.className = "unity-mobile";
@@ -77,67 +75,49 @@
            document.body.classList.add("unity-desktop");
        }
 
-       // Set canvas background if needed (if not set in style.css)
-       // const backgroundFilename = "background.png";
-       // canvas.style.background = "url('" + buildUrl + "/" + backgroundFilename + "') center / cover";
-
-      // --- Unity Loading Logic ---
-
-      // Show loading screen initially (as it's display: none in HTML)
+      // Show loading screen
       if(loadingCover) loadingCover.style.display = "flex";
 
       const script = document.createElement("script");
-      script.src = loaderUrl; // Path to Unity loader script
-      document.body.appendChild(script); // Add script
+      script.src = loaderUrl;
+      document.body.appendChild(script);
 
-      // Handle script loading errors
       script.onerror = () => {
            console.error("Failed to load Unity loader script:", loaderUrl);
            if (loadingCover) loadingCover.style.display = 'none';
-           alert("Failed to load the game. Please check build path and file names.");
+           alert("Failed to load the game. Check build path/names.");
       };
 
       script.onload = () => {
         // Loader script available
-
-        // Create Unity instance
         createUnityInstance(canvas, config, (progress) => {
            // Update progress bar
-           if (progressBarFull) {
-             progressBarFull.style.width = `${100 * progress}%`;
-           }
+           if (progressBarFull) progressBarFull.style.width = `${100 * progress}%`;
 
-           // Switch from spinner to progress bar
-           if (progress > 0.1) { // Switch after some initial progress
+           // Switch spinner/progress bar
+           if (progress > 0.1) {
              if (spinner) spinner.style.display = "none";
-             if (progressBarEmpty) progressBarEmpty.style.display = ""; // Show empty bar
+             if (progressBarEmpty) progressBarEmpty.style.display = "";
            } else {
                if (spinner) spinner.style.display = "block";
                if (progressBarEmpty) progressBarEmpty.style.display = "none";
            }
-
         }).then((unityInstance) => {
             // Game loaded
-
-            // Hide loading screen
             if (loadingCover) loadingCover.style.display = "none";
 
             // Setup fullscreen button
             if (canFullscreen && fullscreenButton) {
                  fullscreenButton.style.display = "";
-              fullscreenButton.onclick = () => {
-                unityInstance.SetFullscreen(1); // Toggle fullscreen
-              };
+              fullscreenButton.onclick = () => unityInstance.SetFullscreen(1);
             }
-
         }).catch((message) => {
-            // Error during loading/initialization
+            // Error
             console.error("Unity Loading Failed:", message);
             if (loadingCover) loadingCover.style.display = "none";
             alert("Game failed to load: " + message);
         });
       };
-
     </script>
   </body>
 </html>
