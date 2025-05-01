@@ -1,66 +1,104 @@
-/*
-Этот файл предназначен для размещения в папке TemplateData вашего Unity билда.
-Он управляет стилями HTML-шаблона, который загружается ВНУТРИ iframe.
-Изменения здесь НЕ влияют напрямую на стили родительского React приложения.
-*/
-
 html {
-    /* Устанавливает фон всего HTML документа внутри iframe в черный */
-    background-color: black;
+    box-sizing: border-box;
 }
-
+*, *:before, *:after {
+    box-sizing: inherit;
+}
+html, body {
+    height: 100%;
+}
+canvas {
+    display: block;
+}
 body {
-    padding: 0;
     margin: 0;
-    /* Можно также установить фон body в прозрачный или черный, если html фон не достаточен */
-    background-color: black; /* Или transparent, если Unity рендерит прозрачность */
-    overflow: hidden; /* Предотвращает полосы прокрутки */
 }
-
-.webgl-content * {
-    border: 0;
-    margin: 0;
-    padding: 0;
+#unity-container {
+    width: 100%;
+    height: 100%;
 }
-
-.webgl-content {
+#unity-canvas {
+    width: 100%;
+    height: 100%;
+    background: {{{ BACKGROUND_COLOR }}};
+}
+#loading-cover {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    /* Использует префиксы и transform для центрирования основного контента */
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
-
-/* maintain 960x540 aspect ratio */
-/* Эти правила управляют размером контейнера Unity внутри iframe */
-#unityContainer { /* Использует ID unityContainer, как в вашем примере */
-    width: 100vw;
-    height: 56.25vw; /* 540/960 = 0.5625 */
-}
-
-@media only screen and (max-width: 960px), (max-height: 540px) {
-    #unityContainer {
-        width: 960px;
-        height: 540px;
-    }
-}
-
-/* Удалены стили для #unity-canvas, #unity-loading-bar и их элементов */
-/* Предполагается, что ваш новый шаблон управляет ими через .webgl-content и другие классы/ID, */
-/* или они стилизуются инлайн или скриптами Unity. */
-/* Если вам нужны стили для loading bar и canvas из старого примера, их нужно добавить сюда. */
-
-/* Пример добавления стилей загрузки из старого шаблона, если они нужны */
-/*
-#unity-canvas { background: transparent; } // Или цвет, если не нужна прозрачность
 #unity-loading-bar {
-    position: absolute;
-    left: 50%; top: 50%;
-    transform: translate(-50%, -50%);
-    display: none; // Управляется скриптом index.html
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
-#unity-logo { ... } // Если используются изображения загрузки
-#unity-progress-bar-empty { ... }
-#unity-progress-bar-full { ... }
-*/
+#unity-logo {
+    text-align: center;
+}
+#unity-logo img {
+    max-width: 80%;
+}
+#unity-progress-bar-empty {
+    width: 80%;
+    height: 24px;
+    margin: 10px 20px 20px 10px;
+    text-align: left;
+    border: 1px solid white;
+    padding: 2px;
+}
+#unity-progress-bar-full {
+    width: 0%;
+    height: 100%;
+    background: white;
+}
+.light #unity-progress-bar-empty {
+    border-color: black;
+}
+.light #unity-progress-bar-full {
+    background: black;
+}
+
+#unity-fullscreen-button {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 38px;
+    height: 38px;
+    background: url('fullscreen-button.png') no-repeat center;
+    background-size: contain;
+}
+
+.spinner,
+.spinner:after {
+  border-radius: 50%;
+  width: 5em;
+  height: 5em;
+}
+.spinner {
+  margin: 10px;
+  font-size: 10px;
+  position: relative;
+  text-indent: -9999em;
+  border-top: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-right: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
+  border-left: 1.1em solid #ffffff;
+  transform: translateZ(0);
+  animation: spinner-spin 1.1s infinite linear;
+}
+@keyframes spinner-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
