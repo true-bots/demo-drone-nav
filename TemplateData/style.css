@@ -33,12 +33,15 @@ body { margin: 0; background-color: #181818; overflow: hidden; }
     background-color: rgba(0, 0, 0, 0.7); border-radius: 10px;
 }
 
-#unity-logo { text-align: center; margin-bottom: 10px; }
+#unity-logo {
+    text-align: center;
+    margin-bottom: 5px; /* Adjusted margin */
+}
 #unity-logo img { max-width: 100%; height: auto; display: block; }
 
 #unity-progress-bar-empty {
     width: 80%; height: 24px;
-    margin: 5px auto 5px auto;
+    margin: 0 auto 5px auto; /* Adjusted margin */
     text-align: left; border: 1px solid white; padding: 2px; flex-shrink: 0;
 }
 #unity-progress-bar-full { width: 0%; height: 100%; background: white; }
