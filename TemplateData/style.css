@@ -1,12 +1,13 @@
 /*
-Этот файл предназначен для размещения в папке TemplateData вашего Unity билда.
-Он управляет стилями HTML-шаблона, который загружается ВНУТРИ iframe.
-Стили являются точной копией предоставленного вами референсного шаблона,
-за исключением статической установки background-color для canvas.
+This file belongs in the TemplateData/ folder of your Unity WebGL build.
+It controls the styles for the HTML template loaded INSIDE the iframe.
+Styles are based on your provided reference template.
 */
 
 html {
     box-sizing: border-box;
+    /* Sets the background of the entire HTML document inside the iframe to black */
+    background-color: black;
 }
 *, *:before, *:after {
     box-sizing: inherit;
@@ -16,22 +17,24 @@ html, body {
 }
 canvas {
     display: block;
+    /* Sets the canvas background to black */
+    /* Note: True transparency also requires enabling alpha channel in Unity build settings. */
+    background: black;
 }
 body {
     margin: 0;
-    /* Устанавливает фон body, если html фон не достаточен */
-    background-color: black; /* Соответствует html background-color */
-    /* Возможно, потребуется overflow: hidden; если содержимое может выйти за пределы */
+    /* Sets the body background to black for reliability */
+    background-color: black;
+    /* Prevent overflow scrollbars inside the iframe */
     overflow: hidden;
 }
 
-/* Note: Референсный шаблон использует ID #unityContainer для основного контейнера контента, */
-/* и #unity-container для применения классов unity-desktop/mobile. */
+/* Note: The reference template uses ID #unityContainer for the main content container, */
+/* and #unity-container for applying unity-desktop/mobile classes. */
 #unity-container {
     width: 100%;
     height: 100%;
-    /* Референсный CSS не задает явное позиционирование для #unity-container, */
-    /* но оно может потребоваться для 100% ширины/высоты. Добавлено для надежности. */
+    /* Added positioning for fill, if not set elsewhere */
     position: absolute;
     top: 0; left: 0;
 }
@@ -39,9 +42,7 @@ body {
 #unity-canvas {
     width: 100%;
     height: 100%;
-    /* Заменена переменная шаблона {{{ BACKGROUND_COLOR }}} на статическое значение. */
-    /* Используется черный цвет, как и фон html. */
-    background: black;
+    /* Background color is set above */
 }
 
 #loading-cover {
@@ -53,20 +54,19 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    /* Добавлен фон для loading-cover, если он не перекрывает фон body/html */
-     background-color: black; /* Соответствует html background-color */
-    z-index: 10; /* Убедитесь, что он поверх канваса */
+    /* Background for the loading cover */
+     background-color: black;
+    z-index: 10; /* Ensure it's above the canvas */
 }
 
 #unity-loading-bar {
-    flex: 1 1 auto;
+    flex: 1 1 auto; /* Allow to take up available space */
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-     /* Добавлены отступы и фон для самого бара, как в предыдущей версии для лучшего вида */
-     /* Эти стили НЕ были в вашем референсе, удалите их, если хотите строгую копию */
-     max-width: 400px; /* Пример, можно убрать */
+     /* Added padding and background for the bar itself for better look */
+     max-width: 400px; /* Example, can remove */
      padding: 20px;
      background-color: rgba(0, 0, 0, 0.7);
      border-radius: 10px;
@@ -74,31 +74,32 @@ body {
 
 #unity-logo {
     text-align: center;
-    margin-bottom: 20px; /* Отступ под логотипом */
+    /* Reduced bottom margin to bring closer to progress bar */
+    margin-bottom: 10px;
 }
 #unity-logo img {
-    max-width: 100%; /* Максимальная ширина логотипа внутри его контейнера */
+    max-width: 100%; /* Max width of logo inside its container */
     height: auto;
-    display: block; /* Изображение как блочный элемент */
+    display: block; /* Image as a block element */
 }
 
 #unity-progress-bar-empty {
-    width: 80%; /* Ширина полосы относительно родителя (#unity-loading-bar) */
+    width: 80%; /* Width relative to parent (#unity-loading-bar) */
     height: 24px;
-    margin: 10px 0; /* Отступы сверху и снизу */
-    /* margin: 10px 20px 20px 10px; /* Отступы из референса, если flex позволяет */
+    /* Adjusted margin for spacing and centering */
+    margin: 5px auto 5px auto;
     text-align: left;
     border: 1px solid white;
     padding: 2px;
-    flex-shrink: 0; /* Не сжиматься в Flex контейнере */
+    flex-shrink: 0; /* Prevent shrinking in Flex container */
 }
 #unity-progress-bar-full {
-    width: 0%; /* Начальная ширина */
+    width: 0%; /* Initial width */
     height: 100%;
     background: white;
 }
 
-/* Стили для светлой темы, если ваш шаблон ее поддерживает (из референса) */
+/* Styles for light theme, if supported by your template (from reference) */
 .light #unity-progress-bar-empty {
     border-color: black;
 }
@@ -106,40 +107,40 @@ body {
     background: black;
 }
 
-/* Стили для кнопки фуллскрин (из референса) */
+/* Styles for fullscreen button (from reference) */
 #unity-fullscreen-button {
     position: absolute;
     right: 10px;
     bottom: 10px;
-    width: 38px;
-    height: 38px;
-    /* Убедитесь, что файл fullscreen-button.png находится в папке TemplateData */
+    /* Increased size */
+    width: 50px;
+    height: 50px;
+    /* Ensure fullscreen-button.png is in TemplateData/ */
     background: url('fullscreen-button.png') no-repeat center;
     background-size: contain;
     cursor: pointer;
-    z-index: 11; /* Выше loading-cover */
+    z-index: 11; /* Above loading-cover */
 }
 
 
-/* Стили для спиннера (из референса) */
+/* Styles for spinner (from reference) */
 .spinner,
 .spinner:after {
   border-radius: 50%;
-  width: 5em; /* 5em = 50px при font-size: 10px */
+  width: 5em; /* 5em = 50px with font-size: 10px */
   height: 5em;
 }
 .spinner {
-  margin: 10px; /* Отступ из референса */
-  font-size: 10px; /* Базовый размер для em */
-  position: relative; /* или absolute, зависит от Flex контейнера */
+  margin: 10px; /* Margin from reference */
+  font-size: 10px; /* Base size for em units */
+  position: relative;
   text-indent: -9999em;
   border-top: 1.1em solid rgba(255, 255, 255, 0.2);
   border-right: 1.1em solid rgba(255, 255, 255, 0.2);
   border-bottom: 1.1em solid rgba(255, 255, 255, 0.2);
-  border-left: 1.1em solid #ffffff; /* Видимая часть спиннера */
+  border-left: 1.1em solid #ffffff; /* Visible part of spinner */
   transform: translateZ(0);
   animation: spinner-spin 1.1s infinite linear;
-  /* Если spinner находится в Flex контейнере #unity-loading-bar, он будет центрироваться Flexbox */
 }
 @keyframes spinner-spin {
   0% {
@@ -150,21 +151,21 @@ body {
   }
 }
 
-/* Стили для скрытия элементов, которые изначально не видны или скрываются скриптом */
-/* Убедитесь, что index.html также устанавливает display: none там, где нужно изначально */
+/* Styles for hiding elements initially or by script */
+/* Ensure index.html also sets display: none where needed initially */
 #loading-cover[style*="display: none"],
 #unity-loading-bar[style*="display: none"],
 #unity-progress-bar-empty[style*="display: none"],
 #unity-fullscreen-button[style*="display: none"],
 .spinner[style*="display: none"] {
-    display: none !important; /* !important может потребоваться, чтобы переопределить inline стили из index.html */
+    display: none !important; /* Use !important to override inline styles from index.html */
 }
 
-/* Начальные стили для элементов загрузки */
-/* Убедитесь, что эти display совпадают с display в HTML и логикой скрипта */
-/* #loading-cover { display: flex; } */ /* Может быть установлено в HTML */
-/* #unity-progress-bar-empty { display: none; } */ /* Может быть установлено в HTML */
-/* .spinner { display: block; } */ /* Может быть установлено в HTML */
+/* Initial display styles for loading elements */
+/* Ensure these display properties match what's in the HTML and script logic */
+/* #loading-cover { display: flex; } */ /* Can be set in HTML */
+/* #unity-progress-bar-empty { display: none; } */ /* Can be set in HTML */
+/* .spinner { display: block; } */ /* Can be set in HTML */
 
-/* Возможно, стили для текста загрузки, если он добавлен в index.html */
+/* Optional: Style for loading text if added in index.html */
 /* #loading-cover p { color: white; font-family: sans-serif; font-size: 1em; } */
