@@ -1,14 +1,20 @@
+/* Этот файл должен находиться в папке TemplateData вашего Unity билда. */
+/* Он управляет стилями HTML-шаблона, который загружается ВНУТРИ iframe. */
+
 body {
     padding: 0;
     margin: 0;
-    /* Устанавливаем фон body в прозрачный */
+    /* Попытка установить фон body в прозрачный. */
+    /* Это не гарантирует прозрачность, если сам Unity не рендерит с альфа-каналом. */
     background-color: transparent;
+    overflow: hidden; /* Предотвращаем появление полос прокрутки */
 }
 
 #unity-container {
     position: absolute;
-    /* Устанавливаем фон контейнера в прозрачный */
+    /* Попытка установить фон контейнера в прозрачный. */
     background-color: transparent;
+    /* Позиционирование для десктопа/мобильных управляется скриптом в index.html */
 }
 
 #unity-container.unity-desktop {
@@ -24,8 +30,8 @@ body {
 }
 
 #unity-canvas {
-    /* Устанавливаем фон канваса в прозрачный */
-    /* Это работает, только если сам Unity настроен на рендеринг с прозрачностью */
+    /* Попытка установить фон канваса в прозрачный. */
+    /* Эффект зависит от настроек рендеринга в самом Unity. */
     background: transparent;
 }
 
@@ -39,67 +45,13 @@ body {
     left: 50%;
     top: 50%;
     transform: translate(-50%, -50%);
-    display: none;
+    /* Дисплей контролируется скриптом в index.html */
 }
 
-#unity-logo {
-    width: 154px;
-    height: 130px;
-    background: url('unity-logo-dark.png') no-repeat center;
-}
+/* Стили для элементов загрузочной полосы (если используются изображения) */
+#unity-logo { width: 154px; height: 130px; background: url('unity-logo-dark.png') no-repeat center }
+#unity-progress-bar-empty { width: 141px; height: 18px; margin-top: 10px; margin-left: 6.5px; background: url('progress-bar-empty-dark.png') no-repeat center }
+#unity-progress-bar-full { width: 0%; height: 18px; margin-top: 10px; background: url('progress-bar-full-dark.png') no-repeat center }
 
-#unity-progress-bar-empty {
-    width: 141px;
-    height: 18px;
-    margin-top: 10px;
-    margin-left: 6.5px;
-    background: url('progress-bar-empty-dark.png') no-repeat center;
-}
-
-#unity-progress-bar-full {
-    width: 0%;
-    height: 18px;
-    margin-top: 10px;
-    background: url('progress-bar-full-dark.png') no-repeat center;
-}
-
-#unity-footer {
-    position: relative;
-}
-
-.unity-mobile #unity-footer {
-    display: none;
-}
-
-#unity-logo-title-footer {
-    float: left;
-    width: 102px;
-    height: 38px;
-    background: url('unity-logo-title-footer.png') no-repeat center;
-}
-
-#unity-build-title {
-    float: right;
-    margin-right: 10px;
-    line-height: 38px;
-    font-family: arial;
-    font-size: 18px;
-}
-
-#unity-fullscreen-button {
-    cursor: pointer;
-    float: right;
-    width: 38px;
-    height: 38px;
-    background: url('fullscreen-button.png') no-repeat center;
-}
-
-#unity-warning {
-    position: absolute;
-    left: 50%;
-    top: 5%;
-    transform: translate(-50%);
-    background: white;
-    padding: 10px;
-    display: none;
-}
+/* Удалены стили для unity-footer, unity-build-title, unity-fullscreen-button, unity-warning */
+/* как часть минимизации и потому что они не влияют на проблему с белым фоном. */
