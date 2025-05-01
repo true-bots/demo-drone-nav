@@ -8,65 +8,77 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
-        /* Дополнительные inline стили, если нужны (например, для отладки) */
+        /* Дополнительные inline стили, если нужны */
     </style>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop"></div>
-    <div id="unityContainer" class="webgl-content"> <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+
+    <div id="unityContainer" class="webgl-content">
+        <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
     </div>
 
-    <div id="loading-cover">
+    <div id="loading-cover" style="display: none;">
         <div id="unity-loading-bar">
-            <div id="unity-logo"><img src="logo.png" alt="Logo"></div>
+            <div id="unity-logo"><img src="TemplateData/logo.png" alt="Logo"></div>
             <div id="unity-progress-bar-empty" style="display: none;">
                 <div id="unity-progress-bar-full"></div>
             </div>
             <div class="spinner"></div>
-            <p style="color: white; margin-top: 10px;">Loading...</p>
+             <p style="color: white; font-family: sans-serif; font-size: 1em; margin-top: 10px;">Loading...</p>
         </div>
     </div>
 
     <div id="unity-fullscreen-button" style="display: none;"></div>
 
+
     <script>
-      // Статические пути к файлам билда. Замените 'YourBuildName' на актуальное имя вашего билда.
-      const buildName = "YourBuildName"; // <--- ЗАМЕНИТЕ ЭТО ИМЯ
-      const buildUrl = "Build"; // Путь к папке Build
+      // --- Настройки билда ---
+      // !!! ВАЖНО !!! Замените 'YourBuildName' на актуальное имя вашего билда Unity.
+      // Это имя папки в Build/ и основа для имен файлов (.loader.js, .data, .wasm, etc.).
+      const buildName = "YourBuildName"; // <--- ЗАМЕНИТЕ ЭТО ИМЯ НА ИМЯ ВАШЕГО БИЛДА
+
+      const buildUrl = "Build"; // Путь к папке Build относительно index.html
       const loaderUrl = buildUrl + "/" + buildName + ".loader.js";
 
       const config = {
         dataUrl: buildUrl + "/" + buildName + ".data",
         frameworkUrl: buildUrl + "/" + buildName + ".framework.js",
         codeUrl: buildUrl + "/" + buildName + ".wasm",
-        // Если используются файлы memory или symbols, добавьте их вручную
+        // Если ваш билд использует файлы memory (.wasm.memory) или symbols (.symbols.json), добавьте их вручную
         // memoryUrl: buildUrl + "/" + buildName + ".wasm.memory",
         // symbolsUrl: buildUrl + "/" + buildName + ".symbols.json",
 
         streamingAssetsUrl: "StreamingAssets",
-        // Статические названия продукта/компании, т.к. переменные шаблона не работают
+        // Статические названия продукта/компании, т.к. переменные шаблона Unity недоступны без пересборки
         companyName: "My Company",
         productName: "My Unity Demo",
         productVersion: "1.0",
-        // showBanner: unityShowBanner, // Если нужна функция баннера из старого шаблона, ее нужно добавить сюда
+        // backgroundUrl: buildUrl + "/background.png", // Пример, если используется фоновое изображение
+        // matchWebGLToCanvasSize: false, // Если нужно управлять размером канваса вручную
+        // devicePixelRatio: 1, // Для управления разрешением на мобильных
+        // showBanner: unityShowBanner, // Если нужна функция showBanner из старого шаблона, скопируйте ее сюда
       };
 
-      const container = document.querySelector("#unityContainer"); // Используем #unityContainer как в референсе
-      const canvas = document.querySelector("#unity-canvas");
-      const loadingCover = document.querySelector("#loading-cover");
-      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty");
-      const progressBarFull = document.querySelector("#unity-progress-bar-full");
-      const fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      const spinner = document.querySelector('.spinner');
+      // --- Ссылки на элементы DOM ---
+      // Используйте ID и классы из вашего style.css и HTML структуры
+      const container = document.querySelector("#unityContainer"); // Основной контейнер контента (#unityContainer из референса)
+      const canvas = document.querySelector("#unity-canvas"); // Канвас для рендеринга
+      const loadingCover = document.querySelector("#loading-cover"); // Оверлей загрузки
+      const progressBarEmpty = document.querySelector("#unity-progress-bar-empty"); // Пустая полоса прогресса
+      const progressBarFull = document.querySelector("#unity-progress-bar-full"); // Заполненная полоса прогресса
+      const fullscreenButton = document.querySelector("#unity-fullscreen-button"); // Кнопка фуллскрин
+      const spinner = document.querySelector('.spinner'); // Спиннер
       // Добавьте другие ссылки на элементы, если они нужны (например, для текста загрузки)
 
+
+      // --- Вспомогательные функции и начальная настройка ---
+
+      // Проверка поддержки фуллскрин API (из референса)
       const canFullscreen = (function() {
         for (const key of [
-            'exitFullscreen',
-            'webkitExitFullscreen',
-            'webkitCancelFullScreen',
-            'mozCancelFullScreen',
-            'msExitFullscreen',
+            'exitFullscreen', 'webkitExitFullscreen', 'webkitCancelFullScreen',
+            'mozCancelFullScreen', 'msExitFullscreen',
           ]) {
           if (key in document) {
             return true;
@@ -75,60 +87,77 @@
         return false;
       }());
 
-      // Логика определения мобильного устройства из старого шаблона, если нужна для CSS классов
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-         document.querySelector("#unity-container").className = "unity-mobile"; // Используем старый ID для класса
-         document.body.classList.add("unity-mobile"); // Добавляем класс на body
-         config.devicePixelRatio = 1; // Возможно, полезно для мобильных
-      } else {
-          document.querySelector("#unity-container").className = "unity-desktop";
-          document.body.classList.add("unity-desktop"); // Добавляем класс на body
-      }
+      // Логика определения мобильного устройства и установки классов (из старого шаблона)
+       const unityContainerBase = document.querySelector("#unity-container"); // Элемент для классов unity-desktop/mobile
+       const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+       if (isMobile) {
+          if(unityContainerBase) unityContainerBase.className = "unity-mobile";
+          document.body.classList.add("unity-mobile");
+          config.devicePixelRatio = 1; // Уменьшение разрешения на мобильных (опционально)
+       } else {
+           if(unityContainerBase) unityContainerBase.className = "unity-desktop";
+           document.body.classList.add("unity-desktop");
+       }
+
+       // Устанавливаем фон канваса, если нужно (если нет фона в CSS style.css)
+       // const backgroundFilename = "background.png"; // Замените на имя вашего файла фона, если есть
+       // canvas.style.background = "url('" + buildUrl + "/" + backgroundFilename + "') center / cover"; // Пример с фоновым изображением
 
 
-      // Устанавливаем фон канваса, если нужно (если нет фона в CSS style.css)
-      // canvas.style.background = "url('" + buildUrl + "/background.png') center / cover"; // Пример с фоновым изображением
+      // --- Логика загрузки Unity ---
 
-      // Показываем загрузочный экран сразу при загрузке index.html
-      loadingCover.style.display = "flex"; // Используем flex для центрирования содержимого
+      // Показываем загрузочный экран, т.к. в HTML у него display: none
+      // Референс делает это так: loadingCover.style.display = "";
+      // Для Flexbox лучше display = 'flex'
+      if(loadingCover) loadingCover.style.display = "flex";
+
 
       const script = document.createElement("script");
-      script.src = loaderUrl;
-      // Добавляем проверку ошибок загрузки скрипта
+      script.src = loaderUrl; // Путь к скрипту загрузчика Unity
+      document.body.appendChild(script); // Добавляем скрипт на страницу
+
+      // Обработка ошибок загрузки скрипта
       script.onerror = () => {
-           console.error("Failed to load Unity loader script.");
-           // Можно показать сообщение об ошибке пользователю
+           console.error("Failed to load Unity loader script:", loaderUrl);
+           // Скрываем загрузочный экран и показываем сообщение об ошибке
            if (loadingCover) loadingCover.style.display = 'none';
-           alert("Failed to load the game. Please try again.");
+           alert("Failed to load the game. Please check the build path and file names.");
       };
 
       script.onload = () => {
-        // Скрипт загрузчика Unity доступен, создаем экземпляр игры
+        // Скрипт загрузчика Unity загружен и доступен (createUnityInstance)
+
+        // Создаем экземпляр игры Unity
         createUnityInstance(canvas, config, (progress) => {
-           // Эта функция вызывается Unity по мере загрузки ресурсов
-           // Обновляем прогресс бар
+           // Эта функция вызывается Unity по мере загрузки ресурсов (progress от 0 до 1)
+
+           // Обновляем прогресс бар (логика из референса)
            if (progressBarFull) {
              progressBarFull.style.width = `${100 * progress}%`;
            }
 
            // Переключаемся со спиннера на прогресс бар, когда прогресс > 0
-           if (progress > 0 && spinner && progressBarEmpty) {
-               spinner.style.display = "none";
-               progressBarEmpty.style.display = ""; // Показываем пустую полосу
+           // Логика из референса: spinner.style.display = "none"; progressBarEmpty.style.display = "";
+           if (progress > 0) { // Переключаемся, как только есть хоть какой-то прогресс
+             if (spinner) spinner.style.display = "none";
+             if (progressBarEmpty) progressBarEmpty.style.display = ""; // Показываем пустую полосу
            }
 
         }).then((unityInstance) => {
             // Игра успешно загружена и инициализирована
-            // Скрываем загрузочный экран
+
+            // Скрываем загрузочный экран (логика из референса)
             if (loadingCover) loadingCover.style.display = "none";
 
             // Настраиваем кнопку фуллскрин
             if (canFullscreen && fullscreenButton) {
-              // if (!hideFullScreenButton) { // Переменная шаблона недоступна, показываем всегда или по условию
+              // Переменная шаблона hideFullScreenButton недоступна, показываем кнопку, если фуллскрин возможен
+              // Референс: if (!hideFullScreenButton) { fullscreenButton.style.display = ""; }
+              // Показываем кнопку, если фуллскрин возможен
                  fullscreenButton.style.display = "";
-              // }
+
               fullscreenButton.onclick = () => {
-                unityInstance.SetFullscreen(1);
+                unityInstance.SetFullscreen(1); // Переключаем в фуллскрин
               };
             }
 
@@ -139,7 +168,6 @@
             alert("Game failed to load: " + message); // Показываем сообщение об ошибке
         });
       };
-      document.body.appendChild(script); // Добавляем скрипт загрузчика на страницу
 
     </script>
   </body>
