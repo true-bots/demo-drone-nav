@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>My Unity Demo</title>
+    <title>Drone Demo</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
     <style>
@@ -12,7 +12,7 @@
     </style>
   </head>
   <body>
-    <div id="unity-container" class="unity-desktop"></div>
+    <div id="unity-container"></div>
 
     <div id="unityContainer" class="webgl-content">
         <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
@@ -34,9 +34,9 @@
 
     <script>
       // --- Настройки билда ---
-      // !!! ВАЖНО !!! Замените 'YourBuildName' на актуальное имя вашего билда Unity.
-      // Это имя папки в Build/ и основа для имен файлов (.loader.js, .data, .wasm, etc.).
-      const buildName = "YourBuildName"; // <--- ЗАМЕНИТЕ ЭТО ИМЯ НА ИМЯ ВАШЕГО БИЛДА
+      // !!! ВАЖНО !!! Здесь установлено имя билда специально для drone демки.
+      // Если вы копируете этот файл для другого демо, измените это значение!
+      const buildName = "demo-drone-nav"; // <--- Имя билда для drone демки
 
       const buildUrl = "Build"; // Путь к папке Build относительно index.html
       const loaderUrl = buildUrl + "/" + buildName + ".loader.js";
@@ -52,7 +52,7 @@
         streamingAssetsUrl: "StreamingAssets",
         // Статические названия продукта/компании, т.к. переменные шаблона Unity недоступны без пересборки
         companyName: "My Company",
-        productName: "My Unity Demo",
+        productName: "Drone Demo",
         productVersion: "1.0",
         // backgroundUrl: buildUrl + "/background.png", // Пример, если используется фоновое изображение
         // matchWebGLToCanvasSize: false, // Если нужно управлять размером канваса вручную
