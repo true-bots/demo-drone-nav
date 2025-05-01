@@ -1,57 +1,66 @@
-/* Этот файл должен находиться в папке TemplateData вашего Unity билда. */
-/* Он управляет стилями HTML-шаблона, который загружается ВНУТРИ iframe. */
+/*
+Этот файл предназначен для размещения в папке TemplateData вашего Unity билда.
+Он управляет стилями HTML-шаблона, который загружается ВНУТРИ iframe.
+Изменения здесь НЕ влияют напрямую на стили родительского React приложения.
+*/
+
+html {
+    /* Устанавливает фон всего HTML документа внутри iframe в черный */
+    background-color: black;
+}
 
 body {
     padding: 0;
     margin: 0;
-    /* Попытка установить фон body в прозрачный. */
-    /* Это не гарантирует прозрачность, если сам Unity не рендерит с альфа-каналом. */
-    background-color: transparent;
-    overflow: hidden; /* Предотвращаем появление полос прокрутки */
+    /* Можно также установить фон body в прозрачный или черный, если html фон не достаточен */
+    background-color: black; /* Или transparent, если Unity рендерит прозрачность */
+    overflow: hidden; /* Предотвращает полосы прокрутки */
 }
 
-#unity-container {
+.webgl-content * {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.webgl-content {
     position: absolute;
-    /* Попытка установить фон контейнера в прозрачный. */
-    background-color: transparent;
-    /* Позиционирование для десктопа/мобильных управляется скриптом в index.html */
-}
-
-#unity-container.unity-desktop {
-    left: 50%;
     top: 50%;
+    left: 50%;
+    /* Использует префиксы и transform для центрирования основного контента */
+    -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
 
-#unity-container.unity-mobile {
-    position: fixed;
-    width: 100%;
-    height: 100%;
+/* maintain 960x540 aspect ratio */
+/* Эти правила управляют размером контейнера Unity внутри iframe */
+#unityContainer { /* Использует ID unityContainer, как в вашем примере */
+    width: 100vw;
+    height: 56.25vw; /* 540/960 = 0.5625 */
 }
 
-#unity-canvas {
-    /* Попытка установить фон канваса в прозрачный. */
-    /* Эффект зависит от настроек рендеринга в самом Unity. */
-    background: transparent;
+@media only screen and (max-width: 960px), (max-height: 540px) {
+    #unityContainer {
+        width: 960px;
+        height: 540px;
+    }
 }
 
-.unity-mobile #unity-canvas {
-    width: 100%;
-    height: 100%;
-}
+/* Удалены стили для #unity-canvas, #unity-loading-bar и их элементов */
+/* Предполагается, что ваш новый шаблон управляет ими через .webgl-content и другие классы/ID, */
+/* или они стилизуются инлайн или скриптами Unity. */
+/* Если вам нужны стили для loading bar и canvas из старого примера, их нужно добавить сюда. */
 
+/* Пример добавления стилей загрузки из старого шаблона, если они нужны */
+/*
+#unity-canvas { background: transparent; } // Или цвет, если не нужна прозрачность
 #unity-loading-bar {
     position: absolute;
-    left: 50%;
-    top: 50%;
+    left: 50%; top: 50%;
     transform: translate(-50%, -50%);
-    /* Дисплей контролируется скриптом в index.html */
+    display: none; // Управляется скриптом index.html
 }
-
-/* Стили для элементов загрузочной полосы (если используются изображения) */
-#unity-logo { width: 154px; height: 130px; background: url('unity-logo-dark.png') no-repeat center }
-#unity-progress-bar-empty { width: 141px; height: 18px; margin-top: 10px; margin-left: 6.5px; background: url('progress-bar-empty-dark.png') no-repeat center }
-#unity-progress-bar-full { width: 0%; height: 18px; margin-top: 10px; background: url('progress-bar-full-dark.png') no-repeat center }
-
-/* Удалены стили для unity-footer, unity-build-title, unity-fullscreen-button, unity-warning */
-/* как часть минимизации и потому что они не влияют на проблему с белым фоном. */
+#unity-logo { ... } // Если используются изображения загрузки
+#unity-progress-bar-empty { ... }
+#unity-progress-bar-full { ... }
+*/
